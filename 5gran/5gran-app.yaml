@@ -10,7 +10,7 @@ spec:
     server: ''
   source:
     path: 5gran
-    repoURL: 'https://github.com/adetalhouet/cnvopen5gcore'
+    repoURL: 'https://github.com/adetalhouet/distributed-open5gs'
     targetRevision: HEAD
   project: default
   syncPolicy:
