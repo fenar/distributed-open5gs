@@ -17,7 +17,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: 'https://github.com/adetalhouet/cnvopen5gcore'
+        repoURL: 'https://github.com/adetalhouet/distributed-open5gs'
         targetRevision: main
         path: '5gcore'
         helm: 
