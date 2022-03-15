@@ -60,7 +60,7 @@ spec:
                   name: link-to-central
                   namespace: open5gcore
                   labels:
-                    skupper.io/type: connection-token-request
+                    skupper.io/type: connection-token
                 data:
                   ca.crt: '{{hub fromConfigMap "open5gcore" "skupper-tls" "ca.crt" hub}}'
                   tls.key: '{{hub fromConfigMap "open5gcore" "skupper-tls" "tls.key" hub}}'
