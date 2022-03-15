@@ -15,6 +15,40 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
+          name: create-secret-from-configmap
+        spec:
+          remediationAction: enforce
+          severity: high
+          namespaceSelector:
+            exclude:
+              - openshift-*
+              - kube-*
+            include:
+              - open5gcore
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Secret
+                apiVersion: v1
+                metadata:
+                  name: link-to-central
+                  namespace: open5gcore
+                  labels:
+                    skupper.io/type: connection-token
+                  annotations:
+                    edge-host: '{{hub fromConfigMap "open5gcore" "skupper-tls" "edge-host" hub}}'
+                    edge-port: '443'
+                    inter-router-host: '{{hub fromConfigMap "open5gcore" "skupper-tls" "inter-router-host" hub}}'
+                    inter-router-port: '443'
+                data:
+                  ca.crt: '{{hub fromConfigMap "open5gcore" "skupper-tls" "ca.crt" hub}}'
+                  tls.key: '{{hub fromConfigMap "open5gcore" "skupper-tls" "tls.key" hub}}'
+                  tls.crt: '{{hub fromConfigMap "open5gcore" "skupper-tls" "tls.crt" hub}}'
+                type: Opaque
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
           name: copy-secret-to-configmap
         spec:
           remediationAction: enforce
