@@ -37,8 +37,8 @@ spec:
                   ca.crt: '{{ fromSecret "open5gcore" "link-to-central" "ca.crt"}}'
                   tls.key: '{{ fromSecret "open5gcore" "link-to-central" "tls.key"}}'
                   tls.crt: '{{ fromSecret "open5gcore" "link-to-central" "tls.crt" }}'
-                  edge-host: '{{ ( lookup "v1"  "Secret" "open5gcore" "link-to-central") .metadata.annotations.edge-host ) }}'
-                  inter-router-host: '{{ ( lookup "v1"  "Secret" "open5gcore" "link-to-central") .metadata.annotations.inter-router-host ) }}'
+                  edge-host: '{{ ( index ( lookup "v1"  "Secret" "open5gcore" "link-to-central").metadata.annotations "edge-host" ) }}'
+                  inter-router-host: '{{ ( index ( lookup "v1"  "Secret" "open5gcore" "link-to-central").metadata.annotations "inter-router-host" ) }}'
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
