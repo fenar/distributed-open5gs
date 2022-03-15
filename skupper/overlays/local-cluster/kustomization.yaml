@@ -6,7 +6,8 @@ bases:
   - ../../base
 
 resources:
-  - link-to-central.yaml
+  - link-to-central-secret.yaml
+  - link-to-central-policy.yaml
 
 patches:
 -  target:
