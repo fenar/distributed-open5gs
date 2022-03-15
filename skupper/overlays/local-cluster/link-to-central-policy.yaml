@@ -61,7 +61,6 @@ spec:
                   namespace: open5gcore
                   labels:
                     skupper.io/type: connection-token-request
-                    policy.open-cluster-management.io/trigger-update: ""
                 data:
                   ca.crt: '{{hub fromConfigMap "open5gcore" "skupper-tls" "ca.crt" hub}}'
                   tls.key: '{{hub fromConfigMap "open5gcore" "skupper-tls" "tls.key" hub}}'
