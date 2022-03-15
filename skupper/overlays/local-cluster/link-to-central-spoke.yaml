@@ -1,7 +1,7 @@
 apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
-  name: link-to-central
+  name: link-to-central-spoke
   namespace: open5gcore
   annotations:
     policy.open-cluster-management.io/standards: Infrastructure security
@@ -15,7 +15,7 @@ spec:
         apiVersion: policy.open-cluster-management.io/v1
         kind: ConfigurationPolicy
         metadata:
-          name: copy-secret-to-configmap
+          name: create-secret-from-configmap
         spec:
           remediationAction: enforce
           severity: high
@@ -28,34 +28,37 @@ spec:
           object-templates:
             - complianceType: musthave
               objectDefinition:
-                kind: ConfigMap
+                kind: Secret
                 apiVersion: v1
                 metadata:
-                  name: skupper-tls
+                  name: link-to-central
                   namespace: open5gcore
+                  labels:
+                    skupper.io/type: connection-token
                 data:
-                  ca.crt: '{{ fromSecret "open5gcore" "link-to-central" "ca.crt"}}'
-                  tls.key: '{{ fromSecret "open5gcore" "link-to-central" "tls.key"}}'
-                  tls.crt: '{{ fromSecret "open5gcore" "link-to-central" "tls.crt" }}'
+                  ca.crt: '{{hub fromConfigMap "open5gcore" "skupper-tls" "ca.crt" hub}}'
+                  tls.key: '{{hub fromConfigMap "open5gcore" "skupper-tls" "tls.key" hub}}'
+                  tls.crt: '{{hub fromConfigMap "open5gcore" "skupper-tls" "tls.crt" hub}}'
+                type: Opaque
 ---
 apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
-  name: link-to-central-binding
+  name: link-to-central-spoke-binding
   namespace: open5gcore
 placementRef:
-  name: link-to-central-clusters
+  name: link-to-central-spoke-clusters
   kind: PlacementRule
   apiGroup: apps.open-cluster-management.io
 subjects:
-  - name: link-to-central
+  - name: link-to-central-spoke
     kind: Policy
     apiGroup: policy.open-cluster-management.io
 ---
 apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
-  name: link-to-central-clusters
+  name: link-to-central-spoke-clusters
   namespace: open5gcore
 spec:
   clusterConditions:
@@ -63,4 +66,4 @@ spec:
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchLabels:
-      5g-core: "True"
+      link-to-central: "True"

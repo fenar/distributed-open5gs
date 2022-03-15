@@ -8,6 +8,7 @@ bases:
 resources:
   - link-to-central-secret.yaml
   - link-to-central-policy.yaml
+  - link-to-central-spoke.yaml
 
 patches:
 -  target:
