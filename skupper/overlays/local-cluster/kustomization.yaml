@@ -8,7 +8,6 @@ bases:
 resources:
   - link-to-central-secret.yaml
   - link-to-central-policy.yaml
-  - managed-cluster-set-binding.yaml
 
 patches:
 -  target:
