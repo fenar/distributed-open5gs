@@ -5,19 +5,25 @@ metadata:
   name: 5g-core
 spec: {}
 ---
-apiVersion: cluster.open-cluster-management.io/v1beta1
-kind: ManagedClusterSet
-metadata:
-  name: argocd-clusters
-spec: {}
----
-apiVersion: cluster.open-cluster-management.io/v1beta1
+apiVersion: cluster.open-cluster-management.io/v1alpha1
 kind: ManagedClusterSetBinding
 metadata:
-  name: argocd-clusters
+  name: 5g-core
   namespace: openshift-gitops
 spec:
-  clusterSet: argocd-clusters
+  clusterSet: 5g-core
+---
+apiVersion: cluster.open-cluster-management.io/v1alpha1
+kind: Placement
+metadata:
+  name: 5g-core-clusters
+  namespace: openshift-gitops
+spec:
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchLabels:
+          5g-core: "true"
 ---
 apiVersion: apps.open-cluster-management.io/v1beta1
 kind: GitOpsCluster
@@ -31,16 +37,5 @@ spec:
   placementRef:
     kind: Placement
     apiVersion: cluster.open-cluster-management.io/v1alpha1
-    name: local-argo-clusters
----
-apiVersion: cluster.open-cluster-management.io/v1alpha1
-kind: Placement
-metadata:
-  name: local-argo-clusters
-  namespace: openshift-gitops
-spec:
-  predicates:
-  - requiredClusterSelector:
-      labelSelector:
-        matchLabels:
-          cluster.open-cluster-management.io/clusterset: "argocd-clusters"
+    name: 5g-core-clusters
+    namespace: openshift-gitops
