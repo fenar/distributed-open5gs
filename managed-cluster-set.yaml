@@ -23,7 +23,7 @@ spec:
   - requiredClusterSelector:
       labelSelector:
         matchLabels:
-          local-argo: true
+          local-argo: "true"
 ---
 apiVersion: apps.open-cluster-management.io/v1beta1
 kind: GitOpsCluster
