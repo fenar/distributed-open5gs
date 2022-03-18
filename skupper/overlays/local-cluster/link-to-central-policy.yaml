@@ -99,4 +99,4 @@ spec:
     type: ManagedClusterConditionAvailable
   clusterSelector:
     matchLabels:
-      cluster.open-cluster-management.io/clusterset: "5g-core"
+      5g-core: "True"
