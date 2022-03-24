@@ -10,7 +10,7 @@ spec:
         labelSelector:
           matchLabels:
             cluster.open-cluster-management.io/placement: 5g-core-clusters
-        requeueAfterSeconds: 180
+        requeueAfterSeconds: 10
   template:
     metadata:
       name: 'distributed-5g-core-{{name}}'
