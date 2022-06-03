@@ -4,14 +4,8 @@ Note - this work is a fork and adaptation of Fatih Nar's repo: https://github.co
 
 The goal is to distribute the user plane and have the control plane centralized. As such, we have two clusters, one containing SMF and UPF, and the other one containing the rest of the 5G Core.
 
-In the central location, called `local-cluster`, we will expose:
-- UDM
-- PCF
-- AMF
-- NRF
-
-In the remote location, called `ca-regina`, we will expose:
-- SMF
+In the central location, called `local-cluster`, we will expose the following 5G Core Network Functions: UDM, PCF, AMF, NRF.
+In the remote location, called `ca-regina`, we will expose the SMF.
 
 ## Prerequisites
 
@@ -25,41 +19,78 @@ In the remote location, called `ca-regina`, we will expose:
     ```
     Wait for machine config to be applied on all worker nodes and all worker nodes come back in to ready state.
 
-## Create a managed cluster set
+## Multi-cluster setup
 
-Apply the following label to the two identified clusters: `5g-core: "True"` following [this documentation](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/clusters/managing-your-clusters#managing-cluster-labels)
+### Create a managed cluster set
 
-![](assets/cluster-label.png)
+In order to manage the various K8S clusters, we create a `ManagedClusterSet` called **5g-core** in Red Hat Advanced Cluster Management. To add clusters in this clusterSet, we need to add the following label `cluster.open-cluster-management.io/clusterset=online-boutique` to the `ManagedClusters` to import.
 
-Create a managed cluster set, along with binding and a cluster placement. The cluster `Placement` object will target any cluster matching the label created above.
-Finally, leverage the placement rule to import the managed clusters into ArgoCD using `GitOpsCluster` CR.
+This clusterSet is then bound to a specific namespace, using a `ManagedClusterSetBinding`. This allows ACM to take action in these clusters through that namespace. In our case, we will bound the clusterSet to `openshift-gitops` namespace, as this is where we will deploy ArgoCD ApplicationSet.
+
+Apply the following
+
 ~~~
 oc apply -f managed-cluster-set.yaml
+oc label managedcluster ca-regina cluster.open-cluster-management.io/clusterset=5g-core
+oc label managedcluster local-cluster cluster.open-cluster-management.io/clusterset=5g-core
 ~~~
 
-Here is the resulting cluster set created in ACM, along with our two clusters part of it.
+This is the result in RHACM
+
 ![](assets/cluster-set.png)
 
-In ArgoCD, we can see both `local-cluster` and `ca-regina` clusters have been successfully imported.
-![](assets/argocd-clusters.png)
+[Find more information about ManagedClusterSet](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/clusters/managing-your-clusters#creating-a-managedclusterset)
 
-## Deploying Skupper
+### Import the managed clusters into ArgoCD
 
-Skupper connects clusters to a secure layer 7 network. It uses that network to forward local service traffic to remote clusters. For that, it requires a router in each cluster to properly foward the traffic in and out. In our scenario, we will expose some of the 5G Core services to Skupper in order to have them reachable across clusters.
+Now that we created the grouping of clusters to work with, let's import them in ArgoCD. Do to so, we need to create a `GitOpsCluster` that will define where is the ArgoCD to integrate with, along with the `Placement` rule to use. In our case, we will use the label `local-argo: True` to denote clusters that should be imported.
 
-To establish a secure link, Skupper can use an empty secret labelled `skupper.io/type: connection-token-request`. The operator will populate the Certificate Authority, along with a Certificate and its Key in this secret.
-That secret, containing the security details to establish the link, needs to be imported to the remote site.
-To do so, we are using ACM deployables functionality: we are basically creating a `Channel`, a `Subscription` and a `PlacementRule` that will look for `Secret` objects containing this annotation `apps.open-cluster-management.io/deployables: "true"` and will ensure each cluster matching the defined `PlacementRule` will have a copy of that secret.
+Apply the following
 
-In order to establish the layer 7 link, we will use an `ApplicationSet` using the same cluster placement as defined in previous step. ArgoCD will render an `Application` per cluster.
-Note: the `selfHeal` feature is disabled because the Skupper operation will modify the secret to populate additional information. If it is enabled, Argo will continuously erase the security details provided by Skupper, and the link won't come up.
-
-To perform all the above, appy the following manifest
 ~~~
-oc apply -f skupper/skupper-acm-appset.yaml
+oc apply -f gitopscluster.yaml
+oc label managedcluster ca-regina local-argo=True
+oc label managedcluster local-cluster local-argo=True
 ~~~
 
-Once done, you should see this in ACM
+This is the result in ArgoCD
+
+![](assets/gitopscluster.png)
+
+[Find more information about the integration of ACM with ArgoCD](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/applications/managing-applications#gitops-config)
+
+## Deploy the Virtual Application Network
+
+Skupper is the technology being used to interconnect the K8S clusters together, along with our database that resides in a bare metal server. 
+
+[Find more information about Skupper here](https://skupper.io/).
+
+### Site establishment
+
+In order to deploy Skupper across all the 2 clusters, we will use an ArgoCD ApplicationSet. It will use the [clusterDecisionResource](https://argocd-applicationset.readthedocs.io/en/stable/Generators-Cluster-Decision-Resource/) generator and will use a `Placement` rule using the label `5g-core: True` to match clusters for which to generate an Application.
+
+To customize the manifest deployed in each site, we are using Kustomize with one overlay folder per cluster, matching the cluster name.
+
+Both our clusters are supporting [Operator Lifecycle Manager](https://olm.operatorframework.io/), but if yours isn't, we have two methods of deploying Skupper site controller: one using the [Skupper operator](skupper/base/operator), one using the [manifests](skupper/base/site-controller).
+
+The way to deploy [Skupper router](skupper/base/instance) is common to all site, and will be customized with the site name and site specific authentication method.
+
+Apply the following
+
+~~~
+oc create -f 5g-core-placement.yaml
+oc label managedcluster ca-regina 5g-core=True
+oc label managedcluster local-cluster 5g-core=True
+oc apply -f skupper/appset-skupper.yaml
+~~~
+
+This is the result in ArgoCD. It is expected the `skupper-local-cluster` ArgoCD Application shows out-of-sync, we will explain later why this is useful.
+In each site, in the namespace `onlineboutique` you should see the Skupper pod. At this point, there is no connectivity between the sites.
+
+You should see this in ArgoCD
+![](assets/skupper-argo.png)
+
+You should see this in ACM
 ![](assets/acm-skupper-appset.png)
 
 And you can browse to Skupper UI; retrieve the route using `oc get routes -n open5gcore skupper`
@@ -70,12 +101,59 @@ You should have two sites registered
 And have the link up between the two sites
 ![](assets/ca-regina-link.png)
 
+### mTLS establishment
+
+Skupper rely on an mTLS to establish a Virtual Application Network. As such, it requires a `Secret` containing the certificate authority, the certificate and the key to be present in all sites.
+
+To have Skupper populating the TLS data into a secret, we can simply create an empty secret with this label `skupper.io/type: connection-token-request`. Skupper site controller will populate all the required information in this secret automatically. In our example, the secret will be generated in the **ca-central**.
+
+Given we are deploying the secret using GitOps, as soon as Skupper adds data into it, ArgoCD will report the secret out-of-sync. This is expected, and we purposely disabled `self-heal` in this ArgoCD Application because we do tolerate this out-of-sync. We will see later why it is very useful.
+
+Once the TLS data exists, it needs to be provided to the other sites in order to setup the mTLS session. To do so, we will use an [RHACM Policy](skupper/overlays/local-cluster/link-to-central-policy.yaml) along with templating functions to copy the secret data over the remote sites. The policy will match clusters based on the `PlacementRule` defined; in our case, it is matching cluster with label `link-to-central: True`.
+
+As defined in the policy, using the templating functions, the secret looks like this:
+~~~
+kind: Secret
+apiVersion: v1
+metadata:
+    name: link-to-central
+    namespace: onlineboutique
+    labels:
+    skupper.io/type: connection-token
+    annotations:
+    edge-host: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").metadata.annotations "edge-host" ) hub}}'
+    edge-port: '443'
+    inter-router-host: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").metadata.annotations "inter-router-host" ) hub}}'
+    inter-router-port: '443'
+data:
+    ca.crt: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").data "ca.crt" ) hub}}'
+    tls.key: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").data "tls.key" ) hub}}'
+    tls.crt: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").data "tls.crt" ) hub}}'
+type: Opaque
+~~~
+
+RHACM will render this policy and will place it in each cluster's namespace, based on the matched clusters. These generated policies are also the source of our `skupper-local-cluster` ArgoCD Application out-of-sync status. Again, this is expected, and we will see later why it is very useful.
+
+Given we already deployed the Skupper ApplicationSet previously, let just add the label to have the secret containing the TLS information propageted to our two remote sites.
+~~~
+oc label managedcluster ca-regina link-to-central=True
+~~~
+
+This is the result you should observe in RHACM
+
+![](assets/skupper-tls-secret.png)
+
+[Find more information about ACM Policy template](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/governance/governance#hub-templates)
+
 ## Deploying Open5GS
 
-Similarly as Skupper deployment, we will use an `ApplicationSet` using the same cluster placement as defined in the first step, and let Argo render `Application`.
-In order to defined what part of the 5G Core will be deployed in each cluster, we are using a Helm chart and are customizaing the values.yaml file for each cluster, identified using `{{cluster-name}}-values.yaml`.
+The application is provided through a Helm chart, where all the various 5G Core Network Functions are defined. In order to specify which microservice will be deployed where, we have created site specific Values.yaml file, prefixed with the name of the site, identified using `{{cluster-name}}-values.yaml`.
 
-Install the application set as follow
+Similarly as the Skupper site controller deployment, we are using an ApplicationSet that will use the same placement rule defined prior e.g. using label `5g-core: True`.
+
+
+Apply the following to deploy the ApplicationSet
+
 ~~~
 oc apply -f 5gcore/distributed-5gcore-acm-appset.yaml
 ~~~
@@ -84,9 +162,12 @@ Once the deployment is done, you should see the following in ACM
 ![](assets/distributed-5g-acm.png)
 
 As part of the deployment, we are exposing services to Skupper to make them reachable through the L7 link created before.
-
-And you should see the services exposed through Skupper UI
+As such, you should see the services discovered and exposed through Skupper Virtual Application Network
 ![](assets/exposed-services.png)
+
+And by looking at the service interactions, we can see the distributed SMF connected to the NRF to register itself
+
+![](asstes/smf-registration.png)
 
 ## Provision the user equipment
 
