@@ -23,7 +23,7 @@ In the remote location, called `ca-regina`, we will expose the SMF.
 
 ### Create a managed cluster set
 
-In order to manage the various K8S clusters, we create a `ManagedClusterSet` called **5g-core** in Red Hat Advanced Cluster Management. To add clusters in this clusterSet, we need to add the following label `cluster.open-cluster-management.io/clusterset=online-boutique` to the `ManagedClusters` to import.
+In order to manage the various K8S clusters, we create a `ManagedClusterSet` called **5g-core** in Red Hat Advanced Cluster Management. To add clusters in this clusterSet, we need to add the following label `cluster.open-cluster-management.io/clusterset=5g-core` to the `ManagedClusters` to import.
 
 This clusterSet is then bound to a specific namespace, using a `ManagedClusterSetBinding`. This allows ACM to take action in these clusters through that namespace. In our case, we will bound the clusterSet to `openshift-gitops` namespace, as this is where we will deploy ArgoCD ApplicationSet.
 
@@ -85,7 +85,7 @@ oc apply -f skupper/appset-skupper.yaml
 ~~~
 
 This is the result in ArgoCD. It is expected the `skupper-local-cluster` ArgoCD Application shows out-of-sync, we will explain later why this is useful.
-In each site, in the namespace `onlineboutique` you should see the Skupper pod. At this point, there is no connectivity between the sites.
+In each site, in the namespace `open5gcore` you should see the Skupper pod. At this point, there is no connectivity between the sites.
 
 You should see this in ArgoCD
 ![](assets/skupper-argo.png)
@@ -117,18 +117,18 @@ kind: Secret
 apiVersion: v1
 metadata:
     name: link-to-central
-    namespace: onlineboutique
+    namespace: open5gcore
     labels:
-    skupper.io/type: connection-token
+        skupper.io/type: connection-token
     annotations:
-    edge-host: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").metadata.annotations "edge-host" ) hub}}'
-    edge-port: '443'
-    inter-router-host: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").metadata.annotations "inter-router-host" ) hub}}'
-    inter-router-port: '443'
+        edge-host: '{{hub ( index ( lookup "v1"  "Secret" "open5gcore" "link-to-central").metadata.annotations "edge-host" ) hub}}'
+        edge-port: '443'
+        inter-router-host: '{{hub ( index ( lookup "v1"  "Secret" "open5gcore" "link-to-central").metadata.annotations "inter-router-host" ) hub}}'
+        inter-router-port: '443'
 data:
-    ca.crt: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").data "ca.crt" ) hub}}'
-    tls.key: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").data "tls.key" ) hub}}'
-    tls.crt: '{{hub ( index ( lookup "v1"  "Secret" "onlineboutique" "link-to-central").data "tls.crt" ) hub}}'
+    ca.crt: '{{hub ( index ( lookup "v1"  "Secret" "open5gcore" "link-to-central").data "ca.crt" ) hub}}'
+    tls.key: '{{hub ( index ( lookup "v1"  "Secret" "open5gcore" "link-to-central").data "tls.key" ) hub}}'
+    tls.crt: '{{hub ( index ( lookup "v1"  "Secret" "open5gcore" "link-to-central").data "tls.crt" ) hub}}'
 type: Opaque
 ~~~
 
