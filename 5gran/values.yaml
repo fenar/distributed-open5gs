@@ -5,7 +5,7 @@ ran:
     pullPolicy: Always
     tag: "v3.2.6"
   amf:
-    address: 172.30.46.140
+    address: 192.168.123.14
     port: 38412
   user:
     imsi: "imsi-208930000000001"
