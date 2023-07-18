@@ -6,3 +6,5 @@ metadata:
 data:
   name: CHANGEME
   console-authentication: openshift
+  console: "true"
+  flow-collector: "true"
