@@ -18,5 +18,5 @@ data:
             dev: ogstun
     smf:
         pfcp:
-           addr: {{ .Values.smf-pfcp.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
+           addr: {{ .Values.smf.pfcpServiceName }}.{{ .Release.Namespace }}.svc.cluster.local
 {{ end }}
