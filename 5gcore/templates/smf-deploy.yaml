@@ -14,7 +14,24 @@ spec:
   ports:
     - protocol: TCP
       port: 80 
-      targetPort: 80  
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: open5gs-smf-pfcp
+  labels:
+    epc-mode: smf
+  # annotations:
+  #   skupper.io/proxy: udp
+  #   skupper.io/address: open5gs-upf-shared
+spec:
+  selector:
+    epc-mode: smf
+  ports:
+    - protocol: UDP
+      port: 8805
+      targetPort: 8805   
 ---  
 apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
 kind: Deployment
