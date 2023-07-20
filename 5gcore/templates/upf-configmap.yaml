@@ -15,7 +15,7 @@ data:
     upf:
         pfcp:
            - addr: 0.0.0.0
-             advertise: {{ .Values.smf.pfcpServiceName }}.{{ .Release.Namespace }}.svc.cluster.local
+             advertise: {{ .Values.upf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
         gtpu:
            dev: {{ .Values.k8s.interface }}
         subnet:
