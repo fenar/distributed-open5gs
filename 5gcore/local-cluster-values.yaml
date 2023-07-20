@@ -9,9 +9,9 @@ open5gcore:
 webui:
   enabled: true
   image:
-    repository: docker.io/efatnar/open5gcore-webui
+    repository: quay.io/adetalho/open5gs-webui 
     pullPolicy: IfNotPresent
-    tag: "v1.1"
+    tag: "v2.6.4"
 
 dnn: internet  
 
