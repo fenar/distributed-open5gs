@@ -9,7 +9,8 @@ data:
   upf.yaml: |
     upf:
         pfcp:
-           dev: {{ .Values.k8s.interface }}
+           - dev: {{ .Values.k8s.interface }}
+             advertise: {{ .Values.upf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
         gtpu:
            dev: {{ .Values.k8s.interface }}
         subnet:
