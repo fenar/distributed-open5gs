@@ -10,7 +10,7 @@ RUN apt-get update && \
       libsctp-dev libgnutls28-dev libgcrypt-dev libssl-dev libidn11-dev libmongoc-dev libbson-dev libyaml-dev libnghttp2-dev \
       libmicrohttpd-dev libcurl4-gnutls-dev libnghttp2-dev libtins-dev libtalloc-dev meson \
       iptables iputils-ping tcpdump cmake curl gnupg iproute2
-RUN git clone --recursive -b v2.4.4 https://github.com/open5gs/open5gs && \
+RUN git clone --recursive -b v2.6.4 https://github.com/open5gs/open5gs && \
    cd open5gs && meson build --prefix=/ && ninja -C build && cd build && ninja install
 
 WORKDIR /

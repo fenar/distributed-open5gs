@@ -9,8 +9,8 @@ In the remote location, called `ca-regina`, we will expose the SMF.
 
 ## Prerequisites
 
-- OpenShift 4.9
-- Advanced Cluster Management 2.4
+- OpenShift 4.12
+- Advanced Cluster Management 2.7
 - OpenShift GitOps on the cluster where ACM is
 - Two clusters that are imported into ACM (can be the local-cluster and another one)
 - SCTP enabled on both clusters
@@ -43,14 +43,13 @@ This is the result in RHACM
 
 ### Import the managed clusters into ArgoCD
 
-Now that we created the grouping of clusters to work with, let's import them in ArgoCD. Do to so, we need to create a `GitOpsCluster` that will define where is the ArgoCD to integrate with, along with the `Placement` rule to use. In our case, we will use the label `local-argo: True` to denote clusters that should be imported.
+Now that we created the grouping of clusters to work with, let's import them in ArgoCD. Do to so, we need to create a `GitOpsCluster` that will define where is the ArgoCD to integrate with, along with the `Placement` rule to use. In our case, we will use the clusterSet `5g-core` to denote clusters that should be imported.
 
 Apply the following
 
 ~~~
+oc apply -f 5g-core-placement.yaml
 oc apply -f gitopscluster.yaml
-oc label managedcluster ca-regina local-argo=True
-oc label managedcluster local-cluster local-argo=True
 ~~~
 
 This is the result in ArgoCD
@@ -67,7 +66,7 @@ Skupper is the technology being used to interconnect the K8S clusters together, 
 
 ### Site establishment
 
-In order to deploy Skupper across all the 2 clusters, we will use an ArgoCD ApplicationSet. It will use the [clusterDecisionResource](https://argocd-applicationset.readthedocs.io/en/stable/Generators-Cluster-Decision-Resource/) generator and will use a `Placement` rule using the label `5g-core: True` to match clusters for which to generate an Application.
+In order to deploy Skupper across all the 2 clusters, we will use an ArgoCD ApplicationSet. It will use the [clusterDecisionResource](https://argocd-applicationset.readthedocs.io/en/stable/Generators-Cluster-Decision-Resource/) generator and will use a `Placement` rule using the clusterSet `5g-core` to match clusters for which to generate an Application (created in the previous step).
 
 To customize the manifest deployed in each site, we are using Kustomize with one overlay folder per cluster, matching the cluster name.
 
@@ -78,9 +77,6 @@ The way to deploy [Skupper router](skupper/base/instance) is common to all site,
 Apply the following
 
 ~~~
-oc create -f 5g-core-placement.yaml
-oc label managedcluster ca-regina 5g-core=True
-oc label managedcluster local-cluster 5g-core=True
 oc apply -f skupper/appset-skupper.yaml
 ~~~
 

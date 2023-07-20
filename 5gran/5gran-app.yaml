@@ -5,7 +5,7 @@ metadata:
   namespace: openshift-gitops
 spec:
   destination:
-    name: in-cluster
+    name: local-cluster
     namespace: open5gran
     server: ''
   source:
