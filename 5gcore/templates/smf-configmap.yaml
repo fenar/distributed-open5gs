@@ -36,4 +36,6 @@ data:
       pfcp:
         - name: {{ .Values.upf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
           dnn: {{ .Values.dnn }}
+        - name: {{ .Values.smf.pfcpServiceName }}.{{ .Release.Namespace }}.svc.cluster.local
+          dnn: {{ .Values.dnn }}
 {{ end }}
