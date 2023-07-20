@@ -7,6 +7,11 @@ metadata:
     epc-mode: upf
 data:
   upf.yaml: |
+    sbi:
+      server:
+        no_tls: true
+      client:
+        no_tls: true
     upf:
         pfcp:
            - dev: {{ .Values.k8s.interface }}

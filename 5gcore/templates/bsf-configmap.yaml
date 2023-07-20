@@ -7,6 +7,11 @@ metadata:
     epc-mode: bsf
 data:
   bsf.yaml: |
+    sbi:
+      server:
+        no_tls: true
+      client:
+        no_tls: true
     #logger:
        #file: /var/log/open5gs/bsf.log
     bsf:
