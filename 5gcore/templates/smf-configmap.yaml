@@ -17,6 +17,7 @@ data:
             advertise: {{ .Values.smf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
         pfcp:
           - addr: 0.0.0.0
+            advertise: {{ .Values.smf.pfcpServiceName }}.{{ .Release.Namespace }}.svc.cluster.local
         gtpc:
           dev: {{ .Values.k8s.interface }}
         gtpu:
