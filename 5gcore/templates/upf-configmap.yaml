@@ -13,7 +13,7 @@ data:
       client:
         no_tls: true
     time:
-     message:
+      message:
         duration: 60000 #1mn
     upf:
         pfcp:
