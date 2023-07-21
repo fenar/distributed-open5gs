@@ -17,7 +17,7 @@ data:
     #     duration: 60000 #1mn
     upf:
         pfcp:
-           - addr: 0.0.0.0
+           - dev: {{ .Values.k8s.interface }}
              advertise: {{ .Values.upf.pfcpServiceName }}.{{ .Release.Namespace }}.svc.cluster.local
         gtpu:
            - dev: {{ .Values.k8s.interface }}
