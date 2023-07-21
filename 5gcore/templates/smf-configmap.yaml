@@ -9,6 +9,9 @@ data:
   smf.yaml: |
     #logger:
        #file: /var/log/open5gs/smf.log
+    time:
+      nf_instance:
+        heartbeat: 180
     sbi:
       server:
         no_tls: true
