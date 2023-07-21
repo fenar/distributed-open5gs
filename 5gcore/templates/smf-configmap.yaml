@@ -9,11 +9,11 @@ data:
   smf.yaml: |
     #logger:
        #file: /var/log/open5gs/smf.log
-    time:
-      nf_instance:
-        heartbeat: 600 #10mn
-      message:
-        duration: 60000 #1mn
+    # time:
+    #   nf_instance:
+    #     heartbeat: 600 #10mn
+    #   message:
+    #     duration: 60000 #1mn
     sbi:
       server:
         no_tls: true
