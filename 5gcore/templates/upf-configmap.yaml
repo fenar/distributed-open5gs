@@ -17,7 +17,8 @@ data:
            - addr: 0.0.0.0
              advertise: {{ .Values.upf.pfcpServiceName }}.{{ .Release.Namespace }}.svc.cluster.local
         gtpu:
-           dev: {{ .Values.k8s.interface }}
+           - dev: {{ .Values.k8s.interface }}
+             advertise: open5gs-upf-gtp.open5gcore.svc.cluster.local
         subnet:
           - addr: 10.45.0.1/16
             dnn: {{ .Values.dnn }}
