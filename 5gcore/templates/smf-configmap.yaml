@@ -12,7 +12,7 @@ data:
     time:
       nf_instance:
         heartbeat: 600 #10mn
-     message:
+      message:
         duration: 60000 #1mn
     sbi:
       server:
