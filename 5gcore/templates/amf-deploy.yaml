@@ -13,7 +13,7 @@ spec:
     - protocol: SCTP
       port: 38412
       targetPort: 38412
-      nodePort: 30412
+      nodePort: 30413
 ---
 apiVersion: v1
 kind: Service
@@ -25,14 +25,12 @@ metadata:
   labels:
     epc-mode: amf
 spec:
-  type: NodePort
   selector:
     epc-mode: amf
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodePort: 30080
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -3,7 +3,6 @@ kind: Route
 apiVersion: route.openshift.io/v1
 metadata:
   name: webui
-  namespace: open5gcore
   labels:
     epc-mode: webui
 spec:
