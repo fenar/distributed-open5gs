@@ -22,9 +22,6 @@ metadata:
   name: open5gs-smf-pfcp
   labels:
     epc-mode: smf
-  # annotations:
-  #   skupper.io/proxy: udp
-  #   skupper.io/address: open5gs-upf-shared
 spec:
   selector:
     epc-mode: smf

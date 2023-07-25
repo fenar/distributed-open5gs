@@ -3,15 +3,15 @@
 open5gcore:
   image:
     repository: quay.io/adetalho/open5gs
-    pullPolicy: IfNotPresent
-    tag: "v1.1"
+    pullPolicy: Always
+    tag: "v2.6.4"
 
 webui:
   enabled: true
   image:
-    repository: docker.io/efatnar/open5gcore-webui
+    repository: quay.io/adetalho/open5gs-webui 
     pullPolicy: IfNotPresent
-    tag: "v1.1"
+    tag: "v2.6.4"
 
 dnn: internet  
 
@@ -23,7 +23,7 @@ amf:
   mcc: 208
   mnc: 93
   tac: 7
-  serviceName: open5gs-amf
+  serviceName: open5gs-amf-shared
 bsf:
   enabled: true
 ausf:
@@ -32,20 +32,21 @@ mongo:
   enabled: true
 nrf:
   enabled: true
-  serviceName: open5gs-nrf
+  serviceName: open5gs-nrf-shared
 nssf:
   enabled: true
 pcf:
   enabled: true
-  serviceName: open5gs-pcf
+  serviceName: open5gs-pcf-shared
 udm:
   enabled: true
-  serviceName: open5gs-udm
+  serviceName: open5gs-udm-shared
 udr:
   enabled: true
 upf:
   enabled: true
-  serviceName: open5gs-udm
+  pfcpServiceName: open5gs-upf-pfcp #-shared
 smf:
   enabled: true
-  serviceName: open5gs-smf
+  pfcpServiceName: open5gs-smf-pfcp #-shared
+  serviceName: open5gs-smf-shared
