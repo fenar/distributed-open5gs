@@ -16,19 +16,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: open5gs-mongodb-d
-  labels:
-    part-of-mesh: "true"
 spec:
   selector:
     matchLabels:
       app: open5gs-mongodb
   template:
     metadata:
-      annotations:
-        sidecar.istio.io/inject: "true"
       labels:
         app: open5gs-mongodb
-        part-of-mesh: "true"
     spec:
       containers:
       - image: quay.io/adetalho/free5gmano-mongodb
