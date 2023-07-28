@@ -17,12 +17,12 @@ data:
     nssf:
       sbi:     
       - addr: 0.0.0.0
-        advertise: open5gs-nssf.{{ .Release.Namespace }}.svc.cluster.local
+        advertise: {{ .Values.nssf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
       nsi:
-      - addr: open5gs-nrf.{{ .Release.Namespace }}.svc.cluster.local
+      - addr: {{ .Values.nrf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
         s_nssai:
           sst: 1        
     nrf:
      sbi:
-      name: open5gs-nrf.{{ .Release.Namespace }}.svc.cluster.local
+      name: {{ .Values.nrf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
 {{ end }}

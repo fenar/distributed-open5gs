@@ -4,14 +4,14 @@ open5gcore:
   image:
     repository: quay.io/adetalho/open5gs
     pullPolicy: IfNotPresent
-    tag: "2.4.4"
+    tag: "v2.6.4"
 
 webui:
   enabled: false
   image:
-    repository: docker.io/efatnar/open5gcore-webui
+    repository: quay.io/adetalho/open5gs-webui 
     pullPolicy: IfNotPresent
-    tag: "v1.1"
+    tag: "v2.6.4"
 
 dnn: internet  
 
@@ -41,8 +41,9 @@ udm:
 udr:
   enabled: false
 smf:
-  enabled: true
+  enabled: false
   serviceName: open5gs-smf-shared
+  pfcpServiceName: open5gs-smf-pfcp-shared
 upf:
   enabled: true
-  serviceName: open5gs-upf
+  pfcpServiceName: open5gs-upf-pfcp-shared

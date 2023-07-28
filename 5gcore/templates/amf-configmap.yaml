@@ -44,5 +44,5 @@ data:
         amf_name: open5gs-amf0
     nrf:
      sbi:
-       name: open5gs-nrf.{{ .Release.Namespace }}.svc.cluster.local
+       name: {{ .Values.nrf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
 {{ end }}

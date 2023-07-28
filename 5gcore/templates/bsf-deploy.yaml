@@ -3,6 +3,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: open5gs-bsf
+  annotations:
+    skupper.io/proxy: http2
+    skupper.io/address: open5gs-bsf-shared
   labels:
     epc-mode: bsf
 spec:

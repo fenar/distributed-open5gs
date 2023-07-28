@@ -17,8 +17,8 @@ data:
     bsf:
         sbi:
           addr: 0.0.0.0
-          advertise: open5gs-bsf.{{ .Release.Namespace }}.svc.cluster.local
+          advertise: {{ .Values.bsf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
     nrf:
      sbi:
-      name: open5gs-nrf.{{ .Release.Namespace }}.svc.cluster.local
+      name: {{ .Values.nrf.serviceName }}.{{ .Release.Namespace }}.svc.cluster.local
 {{ end }}
