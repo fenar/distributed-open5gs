@@ -1,4 +1,4 @@
-# Default values for 5gcore-helm.
+# Values for ca-central
 
 open5gcore:
   image:
