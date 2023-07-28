@@ -25,9 +25,18 @@ spec:
       labels:
         app: open5gs-mongodb
     spec:
+      initContainers:
+      - name: init-mydb
+        image: registry.access.redhat.com/ubi8/ubi:latest
+        command: ['sh', '-c', 'cd /data/db && curl https://raw.githubusercontent.com/open5gs/open5gs/v2.6.4/docs/assets/webui/mongo-init.js;']
+        volumeMounts:
+        - name: mongodb-persistent-storage
+          mountPath: /data/db
       containers:
       - image: quay.io/adetalho/free5gmano-mongodb
         name: open5gs-mongodb
+        command: ["/bin/sh"]
+        args: ["-c", "mongod; sleep 5; mongo open5gs ./data/db/user-init.js"]
         ports:
         - containerPort: 27017
           name: mongodb
