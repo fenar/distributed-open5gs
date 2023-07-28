@@ -27,7 +27,7 @@ bsf:
   enabled: false
 ausf:
   enabled: false
-mongo:
+mongodb:
   enabled: false
 nrf:
   enabled: false
