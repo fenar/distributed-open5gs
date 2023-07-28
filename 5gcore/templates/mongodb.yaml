@@ -28,7 +28,7 @@ spec:
       initContainers:
       - name: init-mydb
         image: registry.access.redhat.com/ubi8/ubi:latest
-        command: ['sh', '-c', 'cd /data/db && curl https://raw.githubusercontent.com/open5gs/open5gs/v2.6.4/docs/assets/webui/mongo-init.js;']
+        command: ['sh', '-c', 'cd /data/db && curl https://raw.githubusercontent.com/open5gs/open5gs/v2.6.4/docs/assets/webui/mongo-init.js > mongo-init.js;']
         volumeMounts:
         - name: mongodb-persistent-storage
           mountPath: /data/db
