@@ -5,7 +5,7 @@ metadata:
   name: mongodb-svc
   annotations:
     skupper.io/proxy: tcp
-    skupper.io/address: mongodb-svc-shared
+    skupper.io/address: open5gs-mongodb-shared
 spec:
   ports:
   - port: 27017
