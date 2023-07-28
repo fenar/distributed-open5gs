@@ -36,7 +36,7 @@ spec:
       - image: quay.io/adetalho/free5gmano-mongodb
         name: open5gs-mongodb
         command: ["/bin/sh"]
-        args: ["-c", "mongod --bind_ip_all; sleep 5; mongo open5gs ./data/db/user-init.js"]
+        args: ["-c", "mongod --bind_ip_all; sleep 5; mongo open5gs ./data/db/mongo-init.js"]
         ports:
         - containerPort: 27017
           name: mongodb
