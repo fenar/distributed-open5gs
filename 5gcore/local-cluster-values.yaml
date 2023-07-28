@@ -52,6 +52,6 @@ upf:
   enabled: false
   pfcpServiceName: open5gs-upf-pfcp-shared
 smf:
-  enabled: true
+  enabled: false
   pfcpServiceName: open5gs-smf-pfcp-shared
   serviceName: open5gs-smf-shared
