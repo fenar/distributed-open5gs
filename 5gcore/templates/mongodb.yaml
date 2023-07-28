@@ -1,21 +1,11 @@
 {{ if .Values.mongodb.enabled }}
-apiVersion: v1
-kind: Service
-metadata:
-  name: mongodb-svc
-  annotations:
-    skupper.io/proxy: tcp
-    skupper.io/address: open5gs-mongodb-shared
-spec:
-  ports:
-  - port: 27017
-  selector:
-    app: open5gs-mongodb
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: open5gs-mongodb-d
+  annotations:
+    skupper.io/proxy: tcp
+    skupper.io/address: open5gs-mongodb-shared
 spec:
   selector:
     matchLabels:
