@@ -4,8 +4,12 @@ Note - this work is a fork and adaptation of Fatih Nar's repo: https://github.co
 
 The goal is to distribute the user plane and have the control plane centralized. As such, we have two clusters, one containing SMF and UPF, and the other one containing the rest of the 5G Core.
 
-In the central location, called `local-cluster`, we will expose the following 5G Core Network Functions: UDM, PCF, AMF, NRF.
-In the remote location, called `ca-regina`, we will expose the SMF.
+In the central location, called `local-cluster` or `ca-central`, we will expose all the 5G Core Network Functions, but SMF.
+In the remote location, called `ca-regina`, we will expose the SMF and deploy the UPF.
+
+At the end, oce the call flow is established, you can visualize the overall SBI interaction, as depicted here
+![](assets/skupper-svc-interaction.png)
+
 
 ## Prerequisites
 
