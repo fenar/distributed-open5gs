@@ -1,4 +1,19 @@
 {{ if .Values.upf.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: open5gs-upf-pfcp
+  labels:
+    epc-mode: upf
+spec:
+  selector:
+    epc-mode: upf
+  ports:
+    - protocol: UDP
+      port: 8805
+      targetPort: 8805  
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
