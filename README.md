@@ -91,12 +91,6 @@ You should see this in ACM
 
 And you can browse to Skupper UI; retrieve the route using `oc get routes -n open5gcore skupper`
 
-You should have two sites registered
-![](assets/ca-regina-sites.png)
-
-And have the link up between the two sites
-![](assets/ca-regina-link.png)
-
 ### mTLS establishment
 
 Skupper rely on an mTLS to establish a Virtual Application Network. As such, it requires a `Secret` containing the certificate authority, the certificate and the key to be present in all sites.
@@ -136,8 +130,10 @@ oc label managedcluster ca-regina link-to-central=True
 ~~~
 
 This is the result you should observe in RHACM
-
 ![](assets/skupper-tls-secret.png)
+
+Now the two sites are connected within that namespace:
+![](assets/ca-regina-link.png)
 
 [Find more information about ACM Policy template](https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.4/html/governance/governance#hub-templates)
 
@@ -157,6 +153,10 @@ oc apply -f 5gcore/distributed-5gcore-acm-appset.yaml
 Once the deployment is done, you should see the following in ACM
 ![](assets/distributed-5g-acm.png)
 
+And in ArgoCD
+![](assets/distributed-5g-argo.png)
+
+
 As part of the deployment, we are exposing services to Skupper to make them reachable through the L7 link created before.
 As such, you should see the services discovered and exposed through Skupper Virtual Application Network
 ![](assets/exposed-services.png)
@@ -175,6 +175,9 @@ Retrieve the webui URL with `oc get route -n open5gcore webui` and login using t
 
 Click "Add new subscriber" and in the `IMSI` field enter `208930000000001`. The rest of the values have been configured automatically.
 
+![](asstes/ue-prov.png)
+
+
 ## Deploy the gNB and the UE
 
 In order for the gNB to establish its SCTP session with AMF, it requires the AMF service IP. As such, update the values.yaml file in the 5gran folder.
@@ -190,13 +193,15 @@ oc apply -f 5gran/5gran-app.yaml
 
 OR Deploy the helm chart manually
 ~~~
-helm install 5gran
+helm install 5gran --kubeconfig ca-regina --namespace open5gran
 ~~~
 
 Once deployed, look at the logs of gNB and UE to validate the PDU session has properly be established
 ![](assets/gnb-logs.png)
 
 ![](assets/ue-logs.png)
+
+![](assets/ue-ping-logs.png)
 
 
 Finally, see bellow the overall interaction within Skupper
