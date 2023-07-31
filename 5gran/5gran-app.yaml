@@ -5,12 +5,12 @@ metadata:
   namespace: openshift-gitops
 spec:
   destination:
-    name: ca-regina
+    name: sandbox01
     namespace: open5gran
     server: ''
   source:
     path: 5gran
-    repoURL: 'https://github.com/adetalhouet/distributed-open5gs'
+    repoURL: 'https://github.com/fenar/distributed-open5gs'
     targetRevision: HEAD
   project: default
   syncPolicy:
@@ -19,4 +19,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-
