@@ -29,6 +29,8 @@ spec:
       epc-mode: nrf
   template:
     metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
       labels:
         epc-mode: nrf
     spec:  
