@@ -42,7 +42,9 @@ spec:
     matchLabels:
       epc-mode: smf
   template:
-    metadata:       
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
       labels:
         epc-mode: smf
     spec:   
