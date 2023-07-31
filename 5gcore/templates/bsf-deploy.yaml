@@ -29,6 +29,8 @@ spec:
       epc-mode: bsf
   template:
     metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
       labels:
         epc-mode: bsf
     spec:  
