@@ -54,3 +54,4 @@ upf:
 smf:
   enabled: false
   pfcpServiceName: open5gs-smf-pfcp #-shared
+  serviceName: open5gs-smf-shared
